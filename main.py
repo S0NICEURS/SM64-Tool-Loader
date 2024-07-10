@@ -15,6 +15,9 @@ class CreateShortcutWindow:
         self.create_shortcut_window = Toplevel(parent)
         self.create_shortcut_window.geometry('400x200')
         self.create_shortcut_window.title('Create Custom Shortcut')
+        self.create_shortcut_window.transient(parent)  # Pour lier la fenêtre enfant à la fenêtre parente
+        self.create_shortcut_window.grab_set()  # Pour rendre la fenêtre parente inactive pendant que celle-ci est ouverte
+        
         self.exe_path_var = StringVar()
         self.shortcut_name_var = StringVar()
         
@@ -82,9 +85,9 @@ def update_custom_load_buttons():
             
             delete_btn = Button(btn_frame, text="Delete", command=lambda name=shortcut_name: delete_custom_shortcut(name))
             delete_btn.pack(side=BOTTOM, pady=5)
-
     else:
-        Label(custom_load_frame, text="No shortcuts found").pack()
+        # Ne rien afficher si pas de raccourcis trouvés
+        pass
 
 def open_custom_shortcut(shortcut_name):
     with open(CUSTOM_SHORTCUTS_FILE, "r") as f:
