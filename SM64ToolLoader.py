@@ -116,11 +116,15 @@ def delete_custom_shortcut(shortcut_name):
     update_custom_load_buttons()  # Mettre à jour les boutons Custom Load après la suppression
 
 def open_flips():
-    exe_path = os.path.join("Tool", "flips.exe")  # Modifié pour ouvrir flips.exe
-    subprocess.Popen([exe_path])
+    script_path = os.path.join("Tool", "flips.py")
+    subprocess.Popen(["python", script_path])
 
 def add_custom_shortcut():
     create_window = CreateShortcutWindow(fenetre)
+
+def open_p64():
+    script_path = os.path.join("Redistributables", "p64.py")
+    subprocess.Popen(["python", script_path])
 
 # Création de la fenêtre principale
 fenetre = Tk()
@@ -145,6 +149,15 @@ button_photo = ImageTk.PhotoImage(button_img)
 btn_open_flips = Button(fenetre, image=button_photo, command=open_flips, bd=0, highlightthickness=0, relief=FLAT)
 btn_open_flips.place(x=(720 - button_photo.width()) // 2, y=(523 - button_photo.height()) // 2 - 4)
 
+# Chargement de l'image du bouton p64
+p64_button_image_url = "https://i.ibb.co/DDnJsvJ/p64.png"
+p64_button_img = Image.open(requests.get(p64_button_image_url, stream=True).raw)
+p64_button_photo = ImageTk.PhotoImage(p64_button_img)
+
+# Placement du bouton p64 en haut au centre
+btn_open_p64 = Button(fenetre, image=p64_button_photo, command=open_p64, bd=0, highlightthickness=0, relief=FLAT)
+btn_open_p64.place(x=(708 - p64_button_photo.width()) // 2, y=5)
+
 # Cadre pour les boutons Custom Load
 custom_load_frame = Frame(fenetre, bg='#492E87')
 custom_load_frame.place(x=10, y=470)
@@ -161,4 +174,3 @@ update_custom_load_buttons()
 
 # Démarrage de la boucle principale Tkinter
 fenetre.mainloop()
-
