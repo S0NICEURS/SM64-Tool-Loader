@@ -126,31 +126,55 @@ def open_p64():
     script_path = os.path.join("Redistributables", "p64.py")
     subprocess.Popen(["python", script_path])
 
+def execute_selected_item(selection):
+    script_paths = {
+        "SM64 Extend": "sm64extend.py",
+        "SM64 Rom Manager": "sm64rommanager.py",
+        "SM64 Editor": "sm64editor.py",
+        "SM64 Tweaker": "sm64tweaker.py",
+        "HxD": "hxd.py",
+        "Seq64": "seq64.py",
+        "Quad64 v0.2": "quad64v0.2.py",
+        "Quad64 v0.3": "quad64v0.3.py",
+        "N64 Sound Tool": "n64soundtool.py",
+        "N64 Soundbank Tool": "n64soundbanktool.py",
+        "N64 Midi Tool": "pip install py7zr",
+        "M64 Parser": "m64parser.py",
+        "SM64 Mus": "sm64mus.py",
+        "SM64 Save Editor": "sm64saveeditor.py",
+    }
+    
+    if selection in script_paths:
+        script_path = script_paths[selection]
+        if script_path.endswith(".py"):
+            script_path = os.path.join("Tool", script_path)
+            subprocess.Popen(["python", script_path])
+        else:
+            subprocess.Popen(script_path.split())
+    else:
+        messagebox.showerror("Error", f"No script found for {selection}")
+
 def execute_items_general(event=None):
-    # Fonction pour exécuter les items de la catégorie "General"
     items_general = [
         "SM64 Extend", "SM64 Rom Manager", "SM64 Editor", "SM64 Tweaker", "HxD", "Seq64"
     ]
     create_item_buttons(items_general)
 
 def execute_items_texture(event=None):
-    # Fonction pour exécuter les items de la catégorie "Texture"
     items_texture = [
         "Quad64 v0.2", "Quad64 v0.3"
     ]
     create_item_buttons(items_texture)
 
 def execute_items_sound(event=None):
-    # Fonction pour exécuter les items de la catégorie "Sound"
     items_sound = [
         "N64 Sound Tool", "N64 Soundbank Tool", "N64 Midi Tool", "M64 Parser", "SM64 Mus"
     ]
     create_item_buttons(items_sound)
 
 def execute_items_utility(event=None):
-    # Fonction pour exécuter les items de la catégorie "Utility"
     items_utility = [
-        "SM64 Save Editor", "N64 vcredist"
+        "SM64 Save Editor"
     ]
     create_item_buttons(items_utility)
 
@@ -163,10 +187,6 @@ def create_item_buttons(items):
     for item in items:
         btn = Button(item_frame, text=item, command=lambda item=item: execute_selected_item(item), bd=0, relief=FLAT, bg='#492E87', fg='white')
         btn.pack(side=TOP, padx=5, pady=5)
-
-def execute_selected_item(selection):
-    # Ici, vous pouvez ajouter le code pour exécuter l'item sélectionné
-    pass
 
 # Création de la fenêtre principale
 fenetre = Tk()
