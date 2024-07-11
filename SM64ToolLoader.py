@@ -80,10 +80,10 @@ def update_custom_load_buttons():
             btn_frame = Frame(custom_load_frame, bg='#492E87')
             btn_frame.pack(side=LEFT, padx=5, pady=5)
             
-            btn = Button(btn_frame, text=shortcut_name, command=lambda name=shortcut_name: open_custom_shortcut(name))
+            btn = Button(btn_frame, text=shortcut_name, command=lambda name=shortcut_name: open_custom_shortcut(name), bd=0, relief=FLAT)
             btn.pack(side=TOP)
             
-            delete_btn = Button(btn_frame, text="Delete", command=lambda name=shortcut_name: delete_custom_shortcut(name))
+            delete_btn = Button(btn_frame, text="Delete", command=lambda name=shortcut_name: delete_custom_shortcut(name), bd=0, relief=FLAT)
             delete_btn.pack(side=BOTTOM, pady=5)
     else:
         # Ne rien afficher si pas de raccourcis trouvés
@@ -126,6 +126,48 @@ def open_p64():
     script_path = os.path.join("Redistributables", "p64.py")
     subprocess.Popen(["python", script_path])
 
+def execute_items_general(event=None):
+    # Fonction pour exécuter les items de la catégorie "General"
+    items_general = [
+        "SM64 Extend", "SM64 Rom Manager", "SM64 Editor", "SM64 Tweaker", "HxD", "Seq64"
+    ]
+    create_item_buttons(items_general)
+
+def execute_items_texture(event=None):
+    # Fonction pour exécuter les items de la catégorie "Texture"
+    items_texture = [
+        "Quad64 v0.2", "Quad64 v0.3"
+    ]
+    create_item_buttons(items_texture)
+
+def execute_items_sound(event=None):
+    # Fonction pour exécuter les items de la catégorie "Sound"
+    items_sound = [
+        "N64 Sound Tool", "N64 Soundbank Tool", "N64 Midi Tool", "M64 Parser", "SM64 Mus"
+    ]
+    create_item_buttons(items_sound)
+
+def execute_items_utility(event=None):
+    # Fonction pour exécuter les items de la catégorie "Utility"
+    items_utility = [
+        "SM64 Save Editor", "N64 vcredist"
+    ]
+    create_item_buttons(items_utility)
+
+def create_item_buttons(items):
+    # Efface les boutons précédents
+    for widget in item_frame.winfo_children():
+        widget.destroy()
+
+    # Crée les boutons pour chaque item
+    for item in items:
+        btn = Button(item_frame, text=item, command=lambda item=item: execute_selected_item(item), bd=0, relief=FLAT, bg='#492E87', fg='white')
+        btn.pack(side=TOP, padx=5, pady=5)
+
+def execute_selected_item(selection):
+    # Ici, vous pouvez ajouter le code pour exécuter l'item sélectionné
+    pass
+
 # Création de la fenêtre principale
 fenetre = Tk()
 fenetre.geometry('719x513')
@@ -158,9 +200,34 @@ p64_button_photo = ImageTk.PhotoImage(p64_button_img)
 btn_open_p64 = Button(fenetre, image=p64_button_photo, command=open_p64, bd=0, highlightthickness=0, relief=FLAT)
 btn_open_p64.place(x=(708 - p64_button_photo.width()) // 2, y=5)
 
+# Cadre pour les boutons noirs principaux
+main_button_frame = Frame(fenetre, bg='black')
+main_button_frame.place(x=20, y=170)
+
+# Boutons noirs principaux avec événement de survol
+btn_general = Button(main_button_frame, text="General", command=execute_items_general, bg='black', fg='white', bd=0, relief=FLAT)
+btn_general.pack(side=TOP, padx=7, pady=7)
+btn_general.bind("<Enter>", lambda event, category="General": execute_items_general(event))
+
+btn_texture = Button(main_button_frame, text="Texture", command=execute_items_texture, bg='black', fg='white', bd=0, relief=FLAT)
+btn_texture.pack(side=TOP, padx=7, pady=7)
+btn_texture.bind("<Enter>", lambda event, category="Texture": execute_items_texture(event))
+
+btn_sound = Button(main_button_frame, text="Sound", command=execute_items_sound, bg='black', fg='white', bd=0, relief=FLAT)
+btn_sound.pack(side=TOP, padx=7, pady=7)
+btn_sound.bind("<Enter>", lambda event, category="Sound": execute_items_sound(event))
+
+btn_utility = Button(main_button_frame, text="Utility", command=execute_items_utility, bg='black', fg='white', bd=0, relief=FLAT)
+btn_utility.pack(side=TOP, padx=7, pady=7)
+btn_utility.bind("<Enter>", lambda event, category="Utility": execute_items_utility(event))
+
+# Cadre pour les items de catégorie
+item_frame = Frame(fenetre, bg='#492E87')
+item_frame.place(x=120, y=200)  # Déplacer vers la gauche
+
 # Cadre pour les boutons Custom Load
 custom_load_frame = Frame(fenetre, bg='#492E87')
-custom_load_frame.place(x=10, y=470)
+custom_load_frame.place(x=10, y=460)
 
 # Bouton Custom Load pour ajouter un nouveau raccourci
 btn_custom_load = Button(fenetre, text="Custom Load", command=add_custom_shortcut)
