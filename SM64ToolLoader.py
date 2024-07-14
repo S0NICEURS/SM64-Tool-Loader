@@ -1,10 +1,11 @@
 from tkinter import *
-from tkinter import messagebox, filedialog
+from tkinter import messagebox, filedialog, Menu
 from PIL import Image, ImageTk
 import os
 import subprocess
 import requests
 import json
+import ctypes  # Pour masquer la fenêtre de la console
 
 # Chemin vers le fichier JSON pour les raccourcis personnalisés
 CUSTOM_SHORTCUTS_FILE = "custom_shortcuts.json"
@@ -126,6 +127,10 @@ def open_p64():
     script_path = os.path.join("Redistributables", "p64.py")
     subprocess.Popen(["python", script_path])
 
+def open_vcredist():
+    script_path = os.path.join("Redistributables", "vcredist.py")
+    subprocess.Popen(["python", script_path])
+
 def execute_selected_item(selection):
     script_paths = {
         "SM64 Extend": "sm64extend.py",
@@ -187,6 +192,10 @@ def create_item_buttons(items):
     for item in items:
         btn = Button(item_frame, text=item, command=lambda item=item: execute_selected_item(item), bd=0, relief=FLAT, bg='#492E87', fg='white')
         btn.pack(side=TOP, padx=5, pady=5)
+
+# Masquer la fenêtre de la console
+if __name__ == "__main__":
+    ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
 
 # Création de la fenêtre principale
 fenetre = Tk()
@@ -252,6 +261,15 @@ custom_load_frame.place(x=10, y=460)
 # Bouton Custom Load pour ajouter un nouveau raccourci
 btn_custom_load = Button(fenetre, text="Custom Load", command=add_custom_shortcut)
 btn_custom_load.place(x=15, y=430)
+
+# Création du menu
+menu_bar = Menu(fenetre)
+fenetre.config(menu=menu_bar)
+
+# Menu Dependency
+dependency_menu = Menu(menu_bar, tearoff=0)
+menu_bar.add_cascade(label="Dependency", menu=dependency_menu)
+dependency_menu.add_command(label="N64 Tool vcredist", command=open_vcredist)
 
 # Affichage de l'image de fond sur le canvas
 canvas.create_image(0, 0, image=bg_image, anchor=NW)
