@@ -1,1 +1,2 @@
-[SM64 Tool Loader(https://gamebanana.com/tools/17434)
+[SM64 Tool Loader](https://gamebanana.com/tools/17434)
+
