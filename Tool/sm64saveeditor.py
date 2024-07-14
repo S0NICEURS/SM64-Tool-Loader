@@ -1,73 +1,54 @@
 import os
-import subprocess
 import requests
-import py7zr
-import tempfile
+import zipfile
+import subprocess
 
-# URL pour télécharger SM64SaveEditor-windows-x64-v1.2.0.7z
-sm64_url = "https://github.com/MaikelChan/SM64SaveEditor/releases/download/v1.2.0/SM64SaveEditor-windows-x64-v1.2.0.7z"
+# Chemin vers le fichier SM64SaveEditor.exe dans le dossier SM64 Save Editor
+chemin_sm64saveeditor_exe = os.path.join(os.path.dirname(__file__), 'SM64 Save Editor', 'SM64SaveEditor.exe')
 
-# Nom du fichier exécutable à extraire
-sm64_exe_name = "SM64SaveEditor.exe"
+# URL pour télécharger SM64 Save Editor.zip
+sm64saveeditor_zip_url = "https://archive.org/download/sm64-save-editor/SM64%20Save%20Editor.zip"
 
-# Chemin où vous souhaitez télécharger le fichier .7z
-download_folder = os.path.join(os.path.dirname(__file__), "downloads")
-
-# Chemin où vous souhaitez placer SM64SaveEditor.exe
-extract_folder = os.path.join(os.path.dirname(__file__), "SM64SaveEditor")
-
-# Vérifier si le dossier extract_folder existe, sinon le créer
-os.makedirs(extract_folder, exist_ok=True)
-
-# Fonction pour vérifier l'existence de SM64SaveEditor.exe et l'ouvrir si présent
-def ouvrir_sm64_save_editor():
-    sm64_exe = os.path.join(extract_folder, sm64_exe_name)
-    if os.path.exists(sm64_exe):
-        try:
-            subprocess.Popen([sm64_exe])
-            return True
-        except OSError as e:
-            print(f"Erreur lors de l'ouverture de {sm64_exe_name} : {e}")
-            return False
-    else:
-        print(f"Le fichier {sm64_exe_name} n'existe pas.")
-        return False
-
-# Fonction pour télécharger, extraire et ouvrir SM64SaveEditor.exe à partir de l'archive .7z
-def telecharger_extraire_et_ouvrir_sm64():
+# Fonction pour télécharger et extraire SM64SaveEditor.exe depuis SM64 Save Editor.zip
+def telecharger_et_extraire_save_editor():
     try:
-        # Téléchargement du fichier .7z
-        print(f"Téléchargement de {sm64_url}...")
-        response = requests.get(sm64_url, stream=True)
+        # Téléchargement du fichier ZIP
+        print(f"Téléchargement de {sm64saveeditor_zip_url}...")
+        response = requests.get(sm64saveeditor_zip_url, stream=True)
+        zip_path = os.path.join(os.path.dirname(__file__), "SM64SaveEditor.zip")
         
-        # Création d'un dossier temporaire pour sauvegarder le contenu du .7z
-        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+        with open(zip_path, 'wb') as f:
             for chunk in response.iter_content(chunk_size=8192):
                 if chunk:
-                    tmp_file.write(chunk)
-            temp_filename = tmp_file.name
+                    f.write(chunk)
         
-        # Extraction du fichier SM64SaveEditor.exe du .7z dans un dossier temporaire
-        with py7zr.SevenZipFile(temp_filename, mode='r') as z:
-            # Extraction de tous les fichiers dans un dossier temporaire
-            z.extractall(extract_folder)
+        # Extraction du fichier ZIP
+        with zipfile.ZipFile(zip_path, 'r') as z:
+            z.extractall(os.path.dirname(__file__))
         
-        # Fermeture et suppression du fichier temporaire après extraction
-        os.remove(temp_filename)
+        # Suppression du fichier ZIP après extraction
+        os.remove(zip_path)
         
-        print("SM64SaveEditor a été téléchargé, extrait et déplacé avec succès.")
-        
-        # Renommer le dossier extract_folder en SM64SaveEditor
-        os.rename(extract_folder, os.path.join(os.path.dirname(__file__), "SM64SaveEditor"))
-        
-        # Ouvrir SM64SaveEditor.exe
-        ouvrir_sm64_save_editor()
-        
-        return True
+        print("SM64 Save Editor a été téléchargé et extrait avec succès.")
+        ouvrir_sm64saveeditor_exe()  # Ouvrir SM64SaveEditor.exe après extraction
     except Exception as e:
         print(f"Erreur lors du téléchargement et de l'extraction de SM64SaveEditor : {e}")
-        return False
 
-# Exécution de la fonction pour télécharger, extraire et ouvrir SM64SaveEditor.exe
-if not ouvrir_sm64_save_editor():
-    telecharger_extraire_et_ouvrir_sm64()
+# Fonction pour ouvrir SM64SaveEditor.exe
+def ouvrir_sm64saveeditor_exe():
+    try:
+        if os.path.exists(chemin_sm64saveeditor_exe):
+            subprocess.Popen([chemin_sm64saveeditor_exe], cwd=os.path.dirname(chemin_sm64saveeditor_exe))
+            print(f"{chemin_sm64saveeditor_exe} a été ouvert avec succès.")
+        else:
+            print(f"Le fichier {chemin_sm64saveeditor_exe} n'existe toujours pas.")
+    except OSError as e:
+        print(f"Erreur lors de l'ouverture de SM64SaveEditor.exe : {e}")
+
+# Vérification si le fichier SM64SaveEditor.exe existe
+if os.path.exists(chemin_sm64saveeditor_exe):
+    ouvrir_sm64saveeditor_exe()
+else:
+    print("Le fichier SM64SaveEditor.exe n'existe pas dans ce dossier.")
+    # Télécharger et extraire SM64SaveEditor.exe car il n'existe pas localement
+    telecharger_et_extraire_save_editor()
